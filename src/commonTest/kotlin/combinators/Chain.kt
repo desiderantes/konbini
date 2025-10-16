@@ -42,7 +42,7 @@ class Chain {
         val result = parser {
             chain1(
                 parser { char('c') },
-                parser { char(',') }
+                parser { char(',') },
             )
         }.parse("c,c,d")
         assertIs<ParserResult.Ok<Chain<Char, Char>>>(result)
@@ -83,7 +83,7 @@ class Chain {
     fun chainl_is_left_associative() {
         val result = chainl<Expr, Char>(
             integer.map(Expr::Lit),
-            char('+')
+            char('+'),
         ) { x, y, _ -> Expr.Add(x, y) }.parse("1+2+3")
         assertIs<ParserResult.Ok<Expr>>(result)
         assertEquals(Expr.Add(Expr.Add(Expr.Lit(1), Expr.Lit(2)), Expr.Lit(3)), result.result)
@@ -93,7 +93,7 @@ class Chain {
     fun chainr_is_right_associative() {
         val result = chainr<Expr, Char>(
             integer.map(Expr::Lit),
-            char('+')
+            char('+'),
         ) { x, y, _ -> Expr.Add(x, y) }.parse("1+2+3")
         assertIs<ParserResult.Ok<Expr>>(result)
         assertEquals(Expr.Add(Expr.Lit(1), Expr.Add(Expr.Lit(2), Expr.Lit(3))), result.result)

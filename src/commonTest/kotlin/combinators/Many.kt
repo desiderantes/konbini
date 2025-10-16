@@ -59,12 +59,12 @@ class Many {
             Triple(
                 "1 2 3 4 56",
                 parser { integer().also { whitespace() } },
-                listOf(1, 2, 3, 4, 56L)
+                listOf(1, 2, 3, 4, 56L),
             ),
             Triple(
                 "aabbabab",
                 oneOf(string("ab"), string("a"), string("b")),
-                listOf("a", "ab", "b", "ab", "ab")
+                listOf("a", "ab", "b", "ab", "ab"),
             ),
         )
         examples.forEach { (input, parser, expected) ->
@@ -77,7 +77,12 @@ class Many {
     @Test
     fun many_properly_backtracks_with_compound_parsers() {
         val p = parser {
-            many(parser { char('x') ; char('x') })
+            many(
+                parser {
+                    char('x')
+                    char('x')
+                },
+            )
             string("xyz")
         }
         val result = p.parse("xyz")

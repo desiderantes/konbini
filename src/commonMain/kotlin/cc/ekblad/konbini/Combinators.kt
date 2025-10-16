@@ -1,4 +1,5 @@
 @file:Suppress("NOTHING_TO_INLINE")
+
 package cc.ekblad.konbini
 
 /**
@@ -21,15 +22,13 @@ data class Chain<T, S>(val terms: List<T>, val separators: List<S>) {
 /**
  * Applies the given function to the result of the receiver parser if it succeeds.
  */
-inline fun <T, U> Parser<T>.map(crossinline f: (T) -> U): Parser<U> =
-    parser { f(this.this@map()) }
+inline fun <T, U> Parser<T>.map(crossinline f: (T) -> U): Parser<U> = parser { f(this.this@map()) }
 
 /**
  * Applies the receiver parser, then applies [p].
  * This parser is not atomic.
  */
-inline fun <T, U> Parser<T>.then(crossinline p: Parser<U>): Parser<Pair<T, U>> =
-    parser { this@then() to p() }
+inline fun <T, U> Parser<T>.then(crossinline p: Parser<U>): Parser<Pair<T, U>> = parser { this@then() to p() }
 
 /**
  * Create a parser that performs the given parsing computation.
@@ -151,25 +150,22 @@ inline fun <T, S> ParserState.chain1(crossinline p: Parser<T>, crossinline separ
 /**
  * Creates a [ParserState.chain1] parser.
  */
-inline fun <T, S> chain1(crossinline p: Parser<T>, crossinline separator: Parser<S>) =
-    parser { chain1(p, separator) }
+inline fun <T, S> chain1(crossinline p: Parser<T>, crossinline separator: Parser<S>) = parser { chain1(p, separator) }
 
 /**
  * Parses zero or more instances of [p], separated by [separator], and returns the elements with their respective
  * separators.
  * As this parser potentially matches zero elements, it will never fail.
  */
-inline fun <T, S> ParserState.chain(crossinline p: Parser<T>, crossinline separator: Parser<S>): Chain<T, S> =
-    oneOf(
-        parser { chain1(p, separator) },
-        parser { Chain.empty() }
-    )
+inline fun <T, S> ParserState.chain(crossinline p: Parser<T>, crossinline separator: Parser<S>): Chain<T, S> = oneOf(
+    parser { chain1(p, separator) },
+    parser { Chain.empty() },
+)
 
 /**
  * Creates a [ParserState.chain] parser.
  */
-inline fun <T, S> chain(crossinline p: Parser<T>, crossinline separator: Parser<S>) =
-    parser { chain(p, separator) }
+inline fun <T, S> chain(crossinline p: Parser<T>, crossinline separator: Parser<S>) = parser { chain(p, separator) }
 
 /**
  * Parses one or more instances of [p], separated by [separator], and combines the elements left-to-right using
@@ -178,7 +174,7 @@ inline fun <T, S> chain(crossinline p: Parser<T>, crossinline separator: Parser<
 inline fun <T, S> ParserState.chainl(
     crossinline p: Parser<T>,
     crossinline separator: Parser<S>,
-    crossinline combine: (T, T, S) -> T
+    crossinline combine: (T, T, S) -> T,
 ): T {
     val c = chain(p, separator)
     var result: T = c.terms.firstOrNull()
@@ -195,7 +191,7 @@ inline fun <T, S> ParserState.chainl(
 inline fun <T, S> chainl(
     crossinline p: Parser<T>,
     crossinline separator: Parser<S>,
-    crossinline combine: (T, T, S) -> T
+    crossinline combine: (T, T, S) -> T,
 ) = parser { chainl(p, separator, combine) }
 
 /**
@@ -205,7 +201,7 @@ inline fun <T, S> chainl(
 inline fun <T, S> ParserState.chainr(
     crossinline p: Parser<T>,
     crossinline separator: Parser<S>,
-    crossinline combine: (T, T, S) -> T
+    crossinline combine: (T, T, S) -> T,
 ): T {
     val c = chain(p, separator)
     var result: T = c.terms.lastOrNull()
@@ -222,7 +218,7 @@ inline fun <T, S> ParserState.chainr(
 inline fun <T, S> chainr(
     crossinline p: Parser<T>,
     crossinline separator: Parser<S>,
-    crossinline combine: (T, T, S) -> T
+    crossinline combine: (T, T, S) -> T,
 ) = parser { chainr(p, separator, combine) }
 
 /**
@@ -233,7 +229,7 @@ inline fun <T, S> chainr(
 inline fun <B, T> ParserState.bracket(
     crossinline before: Parser<B>,
     crossinline after: Parser<B>,
-    crossinline p: Parser<T>
+    crossinline p: Parser<T>,
 ): T = atomically {
     before()
     val x = p()
@@ -244,11 +240,8 @@ inline fun <B, T> ParserState.bracket(
 /**
  * Creates a [ParserState.bracket] parser.
  */
-inline fun <B, T> bracket(
-    crossinline before: Parser<B>,
-    crossinline after: Parser<B>,
-    crossinline p: Parser<T>
-) = parser { bracket(before, after, p) }
+inline fun <B, T> bracket(crossinline before: Parser<B>, crossinline after: Parser<B>, crossinline p: Parser<T>) =
+    parser { bracket(before, after, p) }
 
 /**
  * Executes the given parser atomically. The parser either succeeds, or the entire parser fails.
@@ -267,8 +260,7 @@ inline fun <T> ParserState.atomically(p: Parser<T>): T {
 /**
  * Creates an [atomically] parser.
  */
-inline fun <T> atomically(crossinline p: Parser<T>): Parser<T> =
-    parser { atomically(p) }
+inline fun <T> atomically(crossinline p: Parser<T>): Parser<T> = parser { atomically(p) }
 
 /**
  * Executes the given parser atomically. If it succeeds, the result of [p] is returned. If it fails, `null` is returned.
@@ -287,18 +279,16 @@ inline fun <T> ParserState.tryParse(p: Parser<T>): T? {
 /**
  * Creates a [tryParse] parser.
  */
-inline fun <T> tryParse(crossinline p: Parser<T>): Parser<T?> =
-    parser { tryParse(p) }
+inline fun <T> tryParse(crossinline p: Parser<T>): Parser<T?> = parser { tryParse(p) }
 
 /**
  * Replaces the error message of the receiver parser with [msg].
  * Position information is unaffected.
  */
-inline fun <T> Parser<T>.failsWith(msg: String): Parser<T> =
-    parser {
-        try {
-            this@failsWith()
-        } catch (e: FailException) {
-            propagateLastFailure(msg)
-        }
+inline fun <T> Parser<T>.failsWith(msg: String): Parser<T> = parser {
+    try {
+        this@failsWith()
+    } catch (e: FailException) {
+        propagateLastFailure(msg)
     }
+}

@@ -1,4 +1,5 @@
 @file:Suppress("NOTHING_TO_INLINE")
+
 package cc.ekblad.konbini
 
 private val whitespaceRegex = Regex("\\s*")
@@ -99,8 +100,7 @@ var char: Parser<Char> = char()
  * Matches the given regular expression [pattern], returning the text that matched it.
  * Fails if [pattern] could not be matched at the current point in the parser input.
  */
-inline fun ParserState.regex(pattern: String): String =
-    regex(Regex(pattern))
+inline fun ParserState.regex(pattern: String): String = regex(Regex(pattern))
 
 /**
  * Creates [ParserState.regex] parser.

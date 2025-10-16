@@ -27,7 +27,10 @@ class TryParse {
         val p = tryParse<String> {
             string("hel")
             fail("none shall pass")
-        }.map { assertNull(it) ; it }
+        }.map {
+            assertNull(it)
+            it
+        }
         val result = p.parse("hello")
         assertIs<ParserResult.Ok<String?>>(result)
         assertEquals("hello", result.remainingInput)

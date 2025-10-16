@@ -43,7 +43,7 @@ class Bracket {
             bracket(
                 parser { char('(') },
                 parser { char(')') },
-                parser { regex("\\w+") }
+                parser { regex("\\w+") },
             )
         }
         val result = p.parse("(hello)(world)")

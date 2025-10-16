@@ -44,7 +44,7 @@ class SingleQuotedString {
         listOf("\"\"\"", "\"\"", "$123", "", "xyz", "x10", "ff", "e3").forEach { str ->
             assertIs<ParserResult.Error>(
                 singleQuotedString.parse(str),
-                "Managed to parse invalid string \"$str\""
+                "Managed to parse invalid string \"$str\"",
             )
         }
     }

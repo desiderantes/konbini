@@ -14,12 +14,7 @@ sealed class ParserResult<in T> {
     /**
      * Parsing failed with the given [reason], at index [position] in the input string.
      */
-    data class Error(
-        val reason: String,
-        val position: Int,
-        val line: Int,
-        val column: Int
-    ) : ParserResult<Any?>()
+    data class Error(val reason: String, val position: Int, val line: Int, val column: Int) : ParserResult<Any?>()
 }
 
 /**
@@ -36,7 +31,10 @@ fun <S : ParserState, T> (S.() -> T).parse(input: String, skipWhitespace: Boolea
     state.input = input
     return try {
         val p = if (skipWhitespace) {
-            { whitespace() ; this@parse() }
+            {
+                whitespace()
+                this@parse()
+            }
         } else {
             this@parse
         }
@@ -62,7 +60,7 @@ fun <T> Parser<T>.parseToEnd(input: String, ignoreWhitespace: Boolean = false): 
 fun <S : ParserState, T> (S.() -> T).parseToEnd(
     input: String,
     ignoreWhitespace: Boolean = false,
-    state: S
+    state: S,
 ): ParserResult<T> {
     val p: S.() -> T = {
         val result = this@parseToEnd()

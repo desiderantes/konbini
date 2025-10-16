@@ -40,8 +40,11 @@ class OneOf {
     @Test
     fun oneOf_properly_backtracks_with_compound_parsers() {
         val result = oneOf(
-            parser { char('f') ; char('x') },
-            string("foot")
+            parser {
+                char('f')
+                char('x')
+            },
+            string("foot"),
         ).parse("foot")
         assertIs<ParserResult.Ok<String>>(result)
         assertEquals("foot", result.result)
@@ -50,8 +53,14 @@ class OneOf {
     @Test
     fun oneOf_error_message_includes_labels() {
         val result = oneOf(
-            "fx" to parser { char('f') ; char('x') },
-            "foot" to { string("fo") ; string("ot") }
+            "fx" to parser {
+                char('f')
+                char('x')
+            },
+            "foot" to {
+                string("fo")
+                string("ot")
+            },
         ).parse("foo")
         assertIs<ParserResult.Error>(result)
         assertContains(result.reason, "fx")
@@ -67,7 +76,10 @@ class OneOf {
     fun oneOf_error_message_includes_last_subparser_error_if_no_labels_are_given() {
         val result = oneOf(
             fail("not this error"),
-            { string("fo") ; fail("THIS error!") }
+            {
+                string("fo")
+                fail("THIS error!")
+            },
         ).parse("foo")
         assertIs<ParserResult.Error>(result)
         assertEquals("THIS error!", result.reason)

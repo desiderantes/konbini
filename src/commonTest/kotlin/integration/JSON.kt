@@ -19,18 +19,38 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 class JSON {
-    private val comma = parser { whitespace() ; char(',') ; whitespace() }
-    private val colon = parser { whitespace() ; char(':') ; whitespace() }
+    private val comma = parser {
+        whitespace()
+        char(',')
+        whitespace()
+    }
+    private val colon = parser {
+        whitespace()
+        char(':')
+        whitespace()
+    }
     private val pKeyValue = parser { doubleQuotedString().also { colon() } to pValue() }
     private val pAtom = oneOf(decimal, doubleQuotedString, boolean, string("null").map { null })
     private val pArray = bracket(
-        parser { char('[') ; whitespace() },
-        parser { whitespace() ; char(']') },
+        parser {
+            char('[')
+            whitespace()
+        },
+        parser {
+            whitespace()
+            char(']')
+        },
         parser { chain(pValue, comma).terms },
     )
     private val pDict = bracket(
-        parser { char('{') ; whitespace() },
-        parser { whitespace() ; char('}') },
+        parser {
+            char('{')
+            whitespace()
+        },
+        parser {
+            whitespace()
+            char('}')
+        },
         parser { chain(pKeyValue, comma).terms.toMap() },
     )
     private val pValue: Parser<Any?> = oneOf(pAtom, pDict, pArray)
@@ -46,7 +66,7 @@ class JSON {
             "-115" to -115.0,
             "2e2" to 200.0,
             "\"i'm a string\"" to "i'm a string",
-            "\"escape\nchars\"" to "escape\nchars"
+            "\"escape\nchars\"" to "escape\nchars",
         )
         atoms.forEach { (input, expected) ->
             val result = pValue.parseToEnd(input)
@@ -87,9 +107,9 @@ class JSON {
                     "x" to 123.0,
                     "y" to mapOf(
                         "z" to listOf(listOf(null)),
-                        "t" to "hello\nworld"
-                    )
-                )
+                        "t" to "hello\nworld",
+                    ),
+                ),
             ),
         )
         examples.forEach { (input, expected) ->
@@ -106,8 +126,8 @@ class JSON {
             "bar" to null,
             "baz" to mapOf(
                 "123" to mapOf("null" to 456.0),
-                "456" to true
-            )
+                "456" to true,
+            ),
         )
         val input = """
             {
